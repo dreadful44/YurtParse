@@ -142,7 +142,7 @@ public class main{
                 "                                    </td>";
 
         Document doc = Jsoup.parse(html);
-        for(int abc=25; abc<35;abc++) {
+        for(int abc=43; abc<74;abc++) {
             try {
                 Element link = doc.select("a").get(abc);
                 ciktiUrller.add("http://www.yurtarama.com/" + link.attr("href"));
@@ -307,13 +307,20 @@ public class main{
                     yurt.setAciklama("");
                     System.out.printf("yurt setAciklama hata bulundu " + URLInformation.get(i) + "\n");
                 }
-                liste.add(yurt);
+                if(liste.size()>25) {
+                    kaydet(liste);
+                    liste.clear();
+                    liste.add(yurt);
+                }else
+                    liste.add(yurt);
             }
 
         }
-        kaydet(liste);
+        if(liste.size()!=0)
+            kaydet(liste);
     }
     public static void kaydet (List<Yurt> list) {
+
         SessionFactory factory;
         try{
             factory = new Configuration().configure().buildSessionFactory();
@@ -321,18 +328,23 @@ public class main{
             System.err.println("Failed to create sessionFactory object." + ex);
             throw new ExceptionInInitializerError(ex);
         }
-        Session session = factory.openSession();
+
+        Session session = null;
         Transaction tx = null;
         try {
-            tx = session.beginTransaction();
-            for(int a = 0; a<list.size(); a++)
-                session.save(list.get(a));
-            tx.commit();
+
+                session = factory.openSession();
+
+                tx = session.beginTransaction();
+                for (int a = 0; a < list.size(); a++)
+                    session.save(list.get(a));
+                tx.commit();
         }
         catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }finally {
+            if(session.isOpen())
             session.close();
         }
     }
