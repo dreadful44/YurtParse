@@ -1,3 +1,5 @@
+package Pojo;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -6,8 +8,8 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "yurt", schema = "", catalog = "yurt")
-@IdClass(Yurt.class)
-public class Yurt implements Serializable {
+@IdClass(YurtPojo.class)
+public class YurtPojo implements Serializable {
     private int id;
     private int turu;
     private String ili;
@@ -178,7 +180,7 @@ public class Yurt implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Yurt that = (Yurt) o;
+        YurtPojo that = (YurtPojo) o;
 
         if (id != that.id) return false;
         if (turu != that.turu) return false;

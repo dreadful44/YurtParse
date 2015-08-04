@@ -1,3 +1,5 @@
+import Pojo.YurtFoto;
+import Pojo.YurtPojo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -6,6 +8,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +61,8 @@ public class main{
                     }
                 }
         if(liste!=null && liste.size()!=0) {
-            verileriAl(liste);
+            //verileriAl(liste);
+            fotograflariAl(liste);
         }
 
 
@@ -155,12 +163,102 @@ public class main{
         return ciktiUrller;
 
     }
-    public static void verileriAl(List<String> URLInformation) {
-        List<Yurt> liste = new ArrayList<Yurt>();
+
+    public static void fotograflariAl(List<String> URLInformation) {
+        List<YurtFoto> liste = new ArrayList<YurtFoto>();
         Document doc = null;
 
         for(int i=0;i<URLInformation.size();i++) {
-            Yurt yurt = new Yurt();
+            YurtFoto fotograf = new YurtFoto();
+            try {
+                doc = Jsoup.connect(URLInformation.get(i)).get();
+            } catch (Exception e) {
+
+            }
+            if(doc!=null) {
+                for(int j=0;j<8;j++) {
+                    try{
+                        fotograf.setYurtAdi(doc.select(".firma_baslik").first().text());
+                    }
+                    catch (Exception e) {
+                        fotograf.setYurtAdi("");
+                        System.out.printf("yurt adında hata bulundu " + URLInformation.get(i) + "\n");
+                    }
+                    try{
+                        Element turu = doc.select(".ad-thumb"+i).first();
+                        URL url = new URL("http://www.yurtarama.com/"+turu.attr("href"));
+                        InputStream in = new BufferedInputStream(url.openStream());
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        byte[] buf = new byte[1024];
+                        int n = 0;
+                        while (-1!=(n=in.read(buf)))
+                        {
+                            out.write(buf, 0, n);
+                        }
+                        out.close();
+                        in.close();
+                        byte[] response = out.toByteArray();
+                        FileOutputStream fos = new FileOutputStream("yurt/"+i+"_"+j+".jpg");
+                        fos.write(response);
+                        fos.close();
+
+                        fotograf.setFotoAdi(i+"_"+j+".jpg");
+
+                    }
+                    catch (Exception e) {
+                        fotograf.setFotoAdi("");
+                        System.out.printf("yurt turunde hata bulundu " + URLInformation.get(i) + "\n");
+                    }
+                }
+
+                if(liste.size()>25) {
+                    fotografKaydet(liste);
+                    liste.clear();
+                    liste.add(fotograf);
+                }else
+                    liste.add(fotograf);
+            }
+
+        }
+        if(liste.size()!=0)
+            fotografKaydet(liste);
+    }
+    public static void fotografKaydet(List<YurtFoto> list) {
+
+        SessionFactory factory;
+        try{
+            factory = new Configuration().configure().buildSessionFactory();
+        } catch (Throwable ex) {
+            System.err.println("Failed to create sessionFactory object." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        try {
+
+            session = factory.openSession();
+
+            tx = session.beginTransaction();
+            for (int a = 0; a < list.size(); a++)
+                session.save(list.get(a));
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }finally {
+            if(session.isOpen())
+                session.close();
+        }
+    }
+
+    public static void verileriAl(List<String> URLInformation) {
+        List<YurtPojo> liste = new ArrayList<YurtPojo>();
+        Document doc = null;
+
+        for(int i=0;i<URLInformation.size();i++) {
+            YurtPojo yurt = new YurtPojo();
             try {
                 doc = Jsoup.connect(URLInformation.get(i)).get();
             } catch (Exception e) {
@@ -308,7 +406,7 @@ public class main{
                     System.out.printf("yurt setAciklama hata bulundu " + URLInformation.get(i) + "\n");
                 }
                 if(liste.size()>25) {
-                    kaydet(liste);
+                    veriKaydet(liste);
                     liste.clear();
                     liste.add(yurt);
                 }else
@@ -317,9 +415,9 @@ public class main{
 
         }
         if(liste.size()!=0)
-            kaydet(liste);
+            veriKaydet(liste);
     }
-    public static void kaydet (List<Yurt> list) {
+    public static void veriKaydet(List<YurtPojo> list) {
 
         SessionFactory factory;
         try{
@@ -348,7 +446,7 @@ public class main{
             session.close();
         }
     }
-    /*public static void veriyiKaydet (List<Yurt> list) {
+    /*public static void veriyiKaydet (List<Pojo.YurtPojo> list) {
         Connection baglanti = null;
         Statement statement = null;
         try {
@@ -397,7 +495,7 @@ public class main{
     }*/
 
 
-    /*private static void writeXlSFile(List<Yurt> list)
+    /*private static void writeXlSFile(List<Pojo.YurtPojo> list)
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Sample sheet");
@@ -423,7 +521,7 @@ public class main{
         for(int i=0;i<list.size();i++) {
             List<String> veriler = new ArrayList<String>();
             
-            Yurt yurt = list.get(i);
+            Pojo.YurtPojo yurt = list.get(i);
 *//*            veriler.add(String.valueOf(yurt.getId()));
             veriler.add(String.valueOf(yurt.getTuru()));
             veriler.add(yurt.getIli());*//*

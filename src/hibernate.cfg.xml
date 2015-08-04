@@ -9,10 +9,11 @@
         </property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
-        <property name="hibernate.connection.url">jdbc:mysql://localhost/yurt?useUnicode=true&amp;characterEncoding=UTF-8</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/yurt</property>
 
-        <property name="hibernate.connection.username">root</property>
-        <mapping class="Yurt"/>
+        <mapping class="Pojo.YurtPojo"/>
+        <mapping class="Pojo.YurtFoto"/>
+
 
     </session-factory>
 </hibernate-configuration>
