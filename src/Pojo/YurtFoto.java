@@ -9,10 +9,10 @@ import javax.persistence.*;
 @Table(name = "yurt_foto_table", schema = "", catalog = "yurt")
 public class YurtFoto {
     private int id;
-    private String yurtId;
+    private int yurtId;
     private String yurtAdi;
     private String fotoAdi;
-
+    private String yurtIli;
     @Id
     @Column(name = "id")
     public int getId() {
@@ -25,11 +25,11 @@ public class YurtFoto {
 
     @Basic
     @Column(name = "yurt_id")
-    public String getYurtId() {
+    public int getYurtId() {
         return yurtId;
     }
 
-    public void setYurtId(String yurtId) {
+    public void setYurtId(int yurtId) {
         this.yurtId = yurtId;
     }
 
@@ -53,6 +53,13 @@ public class YurtFoto {
         this.fotoAdi = fotoAdi;
     }
 
+    public String getYurtIli() {
+        return yurtIli;
+    }
+
+    public void setYurtIli(String yurtIli) {
+        this.yurtIli = yurtIli;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,7 +68,7 @@ public class YurtFoto {
         YurtFoto that = (YurtFoto) o;
 
         if (id != that.id) return false;
-        if (yurtId != null ? !yurtId.equals(that.yurtId) : that.yurtId != null) return false;
+        if (yurtId != that.yurtId) return false;
         if (yurtAdi != null ? !yurtAdi.equals(that.yurtAdi) : that.yurtAdi != null) return false;
         if (fotoAdi != null ? !fotoAdi.equals(that.fotoAdi) : that.fotoAdi != null) return false;
 
@@ -71,7 +78,7 @@ public class YurtFoto {
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + (yurtId != null ? yurtId.hashCode() : 0);
+        result = 31 * result + yurtId;
         result = 31 * result + (yurtAdi != null ? yurtAdi.hashCode() : 0);
         result = 31 * result + (fotoAdi != null ? fotoAdi.hashCode() : 0);
         return result;

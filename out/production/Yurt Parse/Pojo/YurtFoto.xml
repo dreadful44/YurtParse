@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="Pojo.YurtFoto" table="yurt_foto_table" schema="" catalog="yurt">
+        <id name="id" column="id"/>
+        <property name="yurtId" column="yurt_id"/>
+        <property name="yurtAdi" column="yurt_adi"/>
+        <property name="fotoAdi" column="foto_adi"/>
+    </class>
+</hibernate-mapping>

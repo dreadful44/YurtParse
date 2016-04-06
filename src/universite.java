@@ -1,7 +1,7 @@
 /**
  * Created by Korhan on 27.9.2014.
  */
-public class universite {
+public class Universite {
     String uniAdi;
     String tarihce;
     String sehirOzellikleri;
